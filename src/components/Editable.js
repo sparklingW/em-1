@@ -5,6 +5,7 @@ import * as classNames from 'classnames'
 import globals from '../globals.js'
 import { store } from '../store.js'
 import { isMobile } from '../browser.js'
+import { error } from '../action-creators/error.js'
 
 // components
 import ContentEditable from 'react-contenteditable'
@@ -30,6 +31,7 @@ import {
   chain,
   contextOf,
   cursorBack,
+  ellipsize,
   equalPath,
   getThought,
   hashContext,
@@ -41,6 +43,7 @@ import {
   isHTML,
   pathToContext,
   strip,
+  subtreeObject,
   ellipsizeUrl,
 } from '../util.js'
 
@@ -55,6 +58,7 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
   const thoughts = pathToContext(thoughtsRanked)
   const thoughtsResolved = contextChain.length ? chain(contextChain, thoughtsRanked) : thoughtsRanked
   const value = head(showContexts ? contextOf(thoughts) : thoughts) || ''
+  const readonly = subtreeObject(thoughts).readonly
   const ref = React.createRef()
   const context = showContexts && thoughts.length > 2 ? contextOf(contextOf(thoughts))
     : !showContexts && thoughts.length > 1 ? contextOf(thoughts)
@@ -175,8 +179,18 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
 
       const state = store.getState()
 
-      // NOTE: When Subthought components are re-rendered on edit, change is called with identical old and new values (?) causing an infinite loop
       const newValue = he.decode(strip(e.target.value))
+
+      // when Subthought components are re-rendered on edit, change is called with identical old and new values (?) causing an infinite loop
+      if (newValue === oldValue) return
+
+      // TODO: Disable keypress
+      // e.preventDefault() does not work
+      // disabled={readonly} removes contenteditable property to thought cannot be selected/navigated
+      if (readonly) {
+        error(`"${ellipsize(newValue)}" is read-only and cannot be edited.`)
+        return
+      }
 
       // safari adds <br> to empty contenteditables after editing, so strip thnem out
       // make sure empty thoughts are truly empty
@@ -184,38 +198,36 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
         ref.current.innerHTML = newValue
       }
 
-      if (newValue !== oldValue) {
-        const thought = getThought(oldValue)
-        if (thought) {
-          dispatch({ type: 'existingThoughtChange', context, showContexts, oldValue, newValue, rankInContext: rank, thoughtsRanked, contextChain })
+      const thought = getThought(oldValue)
+      if (thought) {
+        dispatch({ type: 'existingThoughtChange', context, showContexts, oldValue, newValue, rankInContext: rank, thoughtsRanked, contextChain })
 
-          // rerender so that triple dash is converted into horizontal rule
-          // otherwise nothing would be rerendered because the thought is still being edited
-          if (isDivider(newValue)) {
-            dispatch({ type: 'render' })
-          }
+        // rerender so that triple dash is converted into horizontal rule
+        // otherwise nothing would be rerendered because the thought is still being edited
+        if (isDivider(newValue)) {
+          dispatch({ type: 'render' })
+        }
 
-          // store the value so that we have a transcendental head when it is changed
-          oldValue = newValue
+        // store the value so that we have a transcendental head when it is changed
+        oldValue = newValue
 
-          const { tutorialChoice, tutorialStep } = state.settings
-          if (newValue && (
+        const { tutorialChoice, tutorialStep } = state.settings
+        if (newValue && (
+          (
+            Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT1_PARENT &&
+            newValue.toLowerCase() === TUTORIAL_CONTEXT1_PARENT[tutorialChoice].toLowerCase()
+          ) || (
+            Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT2_PARENT &&
+            newValue.toLowerCase() === TUTORIAL_CONTEXT2_PARENT[tutorialChoice].toLowerCase()
+          ) || (
             (
-              Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT1_PARENT &&
-              newValue.toLowerCase() === TUTORIAL_CONTEXT1_PARENT[tutorialChoice].toLowerCase()
-            ) || (
-              Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT2_PARENT &&
-              newValue.toLowerCase() === TUTORIAL_CONTEXT2_PARENT[tutorialChoice].toLowerCase()
-            ) || (
-              (
-                Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT1 ||
-                Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT2
-              ) &&
-              newValue.toLowerCase() === TUTORIAL_CONTEXT[tutorialChoice].toLowerCase()
-            )
-          )) {
-            tutorialNext()
-          }
+              Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT1 ||
+              Math.floor(tutorialStep) === TUTORIAL2_STEP_CONTEXT2
+            ) &&
+            newValue.toLowerCase() === TUTORIAL_CONTEXT[tutorialChoice].toLowerCase()
+          )
+        )) {
+          tutorialNext()
         }
       }
     }}

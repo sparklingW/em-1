@@ -48,6 +48,7 @@ import { getSubthoughts } from './util/getSubthoughts.js'
 import { getThought } from './util/getThought.js'
 import { getThoughtAfter } from './util/getThoughtAfter.js'
 import { getThoughtBefore } from './util/getThoughtBefore.js'
+import { getThoughts } from './util/getThoughts.js'
 import { getThoughtsRanked } from './util/getThoughtsRanked.js'
 import { hashContext } from './util/hashContext.js'
 import { hashContextUrl } from './util/hashContextUrl.js'
@@ -109,6 +110,7 @@ import { strip } from './util/strip.js'
 import { stripPunctuation } from './util/stripPunctuation.js'
 import { subsetThoughts } from './util/subsetThoughts.js'
 import { subtree } from './util/subtree.js'
+import { subtreeObject } from './util/subtreeObject.js'
 import { sumSubthoughtsLength } from './util/sumSubthoughtsLength.js'
 import { sync } from './util/sync.js'
 import { syncRemote } from './util/syncRemote.js'
@@ -167,6 +169,7 @@ export {
   getThought,
   getThoughtAfter,
   getThoughtBefore,
+  getThoughts,
   getThoughtsRanked,
   hashContext,
   hashContextUrl,
@@ -228,6 +231,7 @@ export {
   stripPunctuation,
   subsetThoughts,
   subtree,
+  subtreeObject,
   sumSubthoughtsLength,
   sync,
   syncRemote,
