@@ -1,4 +1,5 @@
 import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // util
 import { cursorBack } from './cursorBack.js'
@@ -7,7 +8,10 @@ import { restoreCursorBeforeSearch } from './restoreCursorBeforeSearch.js'
 /** Exits the search or code view, or move the cursor back, whichever is first. */
 export const exit = () => {
   const state = store.getState()
-  if (state.search != null && !state.cursor) {
+  if (state.error) {
+    error(null)
+  }
+  else if (state.search != null && !state.cursor) {
     store.dispatch({ type: 'search', value: null })
     restoreCursorBeforeSearch()
   }
