@@ -58,11 +58,16 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
   const thoughts = pathToContext(thoughtsRanked)
   const thoughtsResolved = contextChain.length ? chain(contextChain, thoughtsRanked) : thoughtsRanked
   const value = head(showContexts ? contextOf(thoughts) : thoughts) || ''
-  const readonly = subtreeObject(thoughts).readonly
+  const subtree = subtreeObject(thoughts)
+  const readonly = subtree.readonly
   const ref = React.createRef()
   const context = showContexts && thoughts.length > 2 ? contextOf(contextOf(thoughts))
     : !showContexts && thoughts.length > 1 ? contextOf(thoughts)
     : [ROOT_TOKEN]
+  const contextSubtree = subtreeObject(context)
+  const options = contextSubtree.options ? Object.keys(contextSubtree.options)
+    .map(s => s.toLowerCase())
+    : null
 
   // store the old value so that we have a transcendental head when it is changed
   let oldValue = value // eslint-disable-line fp/no-let
@@ -182,7 +187,10 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
       const newValue = he.decode(strip(e.target.value))
 
       // when Subthought components are re-rendered on edit, change is called with identical old and new values (?) causing an infinite loop
-      if (newValue === oldValue) return
+      if (newValue === oldValue) {
+        if (options) error(null)
+        return
+      }
 
       // TODO: Disable keypress
       // e.preventDefault() does not work
@@ -190,6 +198,15 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
       if (readonly) {
         error(`"${ellipsize(newValue)}" is read-only and cannot be edited.`)
         return
+      }
+      else if(options && !options.includes(newValue.toLowerCase())) {
+        error(`Invalid Value: "${newValue}"`)
+        return
+      }
+
+      // clear the error message if value is a valid option
+      if(options) {
+        error(null)
       }
 
       // safari adds <br> to empty contenteditables after editing, so strip thnem out

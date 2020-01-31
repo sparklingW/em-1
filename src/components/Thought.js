@@ -45,6 +45,7 @@ import {
   restoreSelection,
   rootedContextOf,
   subsetThoughts,
+  subtreeObject,
   pathToContext,
   unroot,
 } from '../util.js'
@@ -217,6 +218,11 @@ export const Thought = connect(({ cursor, cursorBeforeEdit, expanded, expandedCo
     (!globals.ellipsizeContextThoughts || equalPath(thoughtsRanked, expandedContextThought)) &&
     thoughtsRanked.length > 2
 
+  const contextSubtree = subtreeObject(contextOf(pathToContext(thoughtsRanked)))
+  const options = !isFunction(value) && contextSubtree.options ? Object.keys(contextSubtree.options)
+    .map(s => s.toLowerCase())
+    : null
+
   return thought ? dropTarget(dragSource(<li className={classNames({
     child: true,
     leaf: children.length === 0,
@@ -235,6 +241,7 @@ export const Thought = connect(({ cursor, cursorBeforeEdit, expanded, expandedCo
     'child-divider': isDivider(thought.value),
     expanded,
     'function': isFunction(value),
+    'invalid-option': options ? !options.includes(value.toLowerCase()) : null
   })} ref={el => {
 
     if (el) {

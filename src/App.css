@@ -2384,3 +2384,7 @@ code, .code {
 .dark .function > .thought-container > .thought-annotation > .subthought {
   background-color: #222;
 }
+
+.invalid-option {
+  color: tomato !important;
+}
