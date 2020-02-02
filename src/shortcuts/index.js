@@ -25,6 +25,7 @@ import subcategorizeAll from './subcategorizeAll.js'
 import subcategorizeOne from './subcategorizeOne.js'
 import toggleCodeView from './toggleCodeView.js'
 import toggleContextView from './toggleContextView.js'
+import toggleHiddenThoughts from './toggleHiddenThoughts.js'
 import toggleProseView from './toggleProseView.js'
 import toggleTableView from './toggleTableView.js'
 import undo from './undo.js'
@@ -60,6 +61,7 @@ export {
   subcategorizeOne,
   toggleCodeView,
   toggleContextView,
+  toggleHiddenThoughts,
   toggleProseView,
   toggleTableView,
   undo,

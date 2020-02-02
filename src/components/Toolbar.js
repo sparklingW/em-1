@@ -41,7 +41,7 @@ import { TriangleRight } from './TriangleRight.js'
 
 const ARROW_SCROLL_BUFFER = 20
 
-export const Toolbar = connect(({ contexts, cursor, toolbarOverlay, scrollPrioritized, settings: { dark } }) => ({ contexts, cursor, dark, toolbarOverlay, scrollPrioritized }))(({ contexts, cursor, dark, toolbarOverlay, scrollPrioritized }) => {
+export const Toolbar = connect(({ contexts, cursor, toolbarOverlay, scrollPrioritized, settings: { dark }, showHiddenThoughts }) => ({ contexts, cursor, dark, toolbarOverlay, scrollPrioritized, showHiddenThoughts }))(({ contexts, cursor, dark, toolbarOverlay, scrollPrioritized, showHiddenThoughts }) => {
 
   const [holdTimer, setHoldTimer] = useState()
   const [holdTimer2, setHoldTimer2] = useState()
@@ -170,6 +170,7 @@ export const Toolbar = connect(({ contexts, cursor, toolbarOverlay, scrollPriori
                       fill: id === 'toggleTableView' && cursorView === 'table' ? 'gray'
                         : id === 'undo' ? 'gray'
                         : id === 'redo' ? 'gray'
+                        : id === 'toggleHiddenThoughts' && !showHiddenThoughts ? 'gray'
                         : fg
                     }} />
                 </div>
