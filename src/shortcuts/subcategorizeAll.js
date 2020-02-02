@@ -1,5 +1,6 @@
 import React from 'react'
 import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // constants
 import {
@@ -9,10 +10,14 @@ import {
 
 // util
 import {
-  getThoughtsRanked,
   contextOf,
+  ellipsize,
+  getThoughtsRanked,
+  headValue,
   lastThoughtsFromContextChain,
+  meta,
   newThought,
+  pathToContext,
   splitChain,
 } from '../util.js'
 
@@ -30,6 +35,17 @@ export default {
   exec: e => {
     const { contextViews, cursor } = store.getState()
     if (cursor) {
+
+      // cancel if parent is readonly
+      if (cursor && meta(pathToContext(contextOf(cursor))).readonly) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is read-only so "${headValue(cursor)}" cannot be subcategorized.`)
+        return
+      }
+      else if (cursor && meta(pathToContext(contextOf(cursor))).unextendable) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is unextendable so "${headValue(cursor)}" cannot be subcategorized.`)
+        return
+      }
+
       const contextChain = splitChain(cursor, contextViews)
       const thoughtsRanked = cursor.length > 1
         ? (contextOf(contextChain.length > 1

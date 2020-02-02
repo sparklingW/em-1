@@ -1,5 +1,6 @@
 import React from 'react'
 import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // constants
 import {
@@ -9,8 +10,12 @@ import {
 // util
 import {
   contextOf,
-  newThought,
   head,
+  headValue,
+  ellipsize,
+  meta,
+  newThought,
+  pathToContext,
 } from '../util.js'
 
 const Icon = ({ fill = 'black', size = 20, style }) => <svg version="1.1" className="icon" xmlns="http://www.w3.org/2000/svg" width={size} height={size} fill={fill} style={style} viewBox='0 0 24 24'>
@@ -28,6 +33,17 @@ export default {
   exec: e => {
     const { cursor } = store.getState()
     if (cursor) {
+
+      // cancel if parent is readonly
+      if (cursor && meta(pathToContext(contextOf(cursor))).readonly) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is read-only so "${headValue(cursor)}" cannot be subcategorized.`)
+        return
+      }
+      else if (cursor && meta(pathToContext(contextOf(cursor))).unextendable) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is unextendable so "${headValue(cursor)}" cannot be subcategorized.`)
+        return
+      }
+
       const { rank } = newThought({ insertBefore: true })
       setTimeout(() => {
         store.dispatch({
