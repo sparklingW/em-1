@@ -12,6 +12,7 @@ import ContentEditable from 'react-contenteditable'
 
 // constants
 import {
+  EM_TOKEN,
   ROOT_TOKEN,
   TUTORIAL2_STEP_CONTEXT1_PARENT,
   TUTORIAL2_STEP_CONTEXT1,
@@ -105,8 +106,8 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
       ['editable-' + hashContext(thoughtsResolved, rank)]: true,
       empty: value.length === 0
     })}
-    html={isEditing
-      ? value
+    html={value === EM_TOKEN ? '<b>em</b>'
+      : isEditing ? value
       : thoughtMeta && thoughtMeta.label
         ? Object.keys(thoughtMeta.label)[0]
         : ellipsizeUrl(value)
@@ -201,12 +202,13 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
       // TODO: Disable keypress
       // e.preventDefault() does not work
       // disabled={readonly} removes contenteditable property to thought cannot be selected/navigated
+      const oldValueClean = oldValue === EM_TOKEN ? 'em' : ellipsize(oldValue)
       if (readonly) {
-        error(`"${ellipsize(oldValue)}" is readonly and cannot be edited.`)
+        error(`"${oldValueClean}" is readonly and cannot be edited.`)
         return
       }
       else if (uneditable) {
-        error(`"${ellipsize(oldValue)}" is uneditable.`)
+        error(`"${oldValueClean}" is uneditable.`)
         return
       }
       else if (options && !options.includes(newValue.toLowerCase())) {
