@@ -209,13 +209,13 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
         error(`"${ellipsize(oldValue)}" is uneditable.`)
         return
       }
-      else if(options && !options.includes(newValue.toLowerCase())) {
+      else if (options && !options.includes(newValue.toLowerCase())) {
         error(`Invalid Value: "${newValue}"`)
         return
       }
 
       // clear the error message if value is a valid option
-      if(options) {
+      if (options) {
         error(null)
       }
 
