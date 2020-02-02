@@ -1,13 +1,17 @@
 import React from 'react'
 import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // util
 import {
-  getRankAfter,
   contextOf,
+  ellipsize,
+  getRankAfter,
+  headValue,
+  meta,
+  pathToContext,
   restoreSelection,
   rootedContextOf,
-  headValue,
   unroot,
 } from '../util.js'
 
@@ -29,6 +33,16 @@ export default {
   exec: e => {
     const { cursor } = store.getState()
     if (cursor && cursor.length > 1) {
+
+      // cancel if parent is readonly or unextendable
+      if (meta(pathToContext(contextOf(cursor))).readonly) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is read-only so "${headValue(cursor)}" may not be de-indented.`)
+        return
+      }
+      else if (meta(pathToContext(contextOf(cursor))).unextendable) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is unextendable so "${headValue(cursor)}" may not be de-indented.`)
+        return
+      }
 
       // store selection offset before existingThoughtMove is dispatched
       const offset = window.getSelection().focusOffset

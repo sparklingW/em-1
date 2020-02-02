@@ -1,15 +1,19 @@
 import React from 'react'
 import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // util
 import {
-  getNextRank,
   contextOf,
+  ellipsize,
+  getNextRank,
+  headRank,
+  headValue,
+  meta,
+  pathToContext,
   prevSibling,
   restoreSelection,
   rootedContextOf,
-  headValue,
-  headRank,
 } from '../util.js'
 
 const Icon = ({ fill = 'black', size = 20, style }) => <svg version="1.1" className="icon" xmlns="http://www.w3.org/2000/svg" width={size} height={size} fill={fill} style={style} viewBox="0 0 64 64" enableBackground="new 0 0 64 64">
@@ -37,6 +41,16 @@ export default {
     const { cursor } = store.getState()
     const prev = perma(() => prevSibling(headValue(cursor), rootedContextOf(cursor), headRank(cursor)))
     if (cursor && prev()) {
+
+      // cancel if parent is readonly or unextendable
+      if (meta(pathToContext(contextOf(cursor))).readonly) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is read-only so "${headValue(cursor)}" may not be indented.`)
+        return
+      }
+      else if (meta(pathToContext(contextOf(cursor))).unextendable) {
+        error(`"${ellipsize(headValue(contextOf(cursor)))}" is unextendable so "${headValue(cursor)}" may not be indented.`)
+        return
+      }
 
       // store selection offset before existingThoughtMove is dispatched
       const offset = window.getSelection().focusOffset

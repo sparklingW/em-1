@@ -35,11 +35,11 @@ export default {
     if (cursor) {
 
       // cancel if parent is readonly
-      if (cursor && meta(pathToContext(contextOf(cursor))).readonly) {
+      if (meta(pathToContext(contextOf(cursor))).readonly) {
         error(`"${ellipsize(headValue(contextOf(cursor)))}" is read-only so "${headValue(cursor)}" cannot be subcategorized.`)
         return
       }
-      else if (cursor && meta(pathToContext(contextOf(cursor))).unextendable) {
+      else if (meta(pathToContext(contextOf(cursor))).unextendable) {
         error(`"${ellipsize(headValue(contextOf(cursor)))}" is unextendable so "${headValue(cursor)}" cannot be subcategorized.`)
         return
       }

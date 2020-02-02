@@ -1,8 +1,14 @@
 import React from 'react'
+import { store } from '../store.js'
+import { error } from '../action-creators/error.js'
 
 // util
 import {
+  ellipsize,
+  headValue,
+  meta,
   newThought,
+  pathToContext,
 } from '../util.js'
 
 const Icon = ({ fill = 'black', size = 20, style }) => <svg version="1.1" className="icon" xmlns="http://www.w3.org/2000/svg" width={size} height={size} fill={fill} style={style} viewBox="0 0 19.481 19.481" enableBackground="new 0 0 19.481 19.481">
@@ -28,5 +34,22 @@ export const newSubthoughtAliases = {
   gesture: [
     'rdlr', 'rdldr', 'rdldlr', 'rdldldr', 'rldr', 'rldlr', 'rldldr', 'rldldlr', 'rdru', 'rdrdru', 'rdrdrru', 'rdrdrdru', 'rlru', 'rdrlru', 'rdrdlru', 'rdrdrlru', 'rdllru', 'rdrd', 'rdrdrd', 'rdrdrrd', 'rdrdrdrd', 'rdlrd', 'rdldrd', 'rdldlrd', 'rdlru', 'rdldru', 'rdldlru', 'rdldldru', 'rldru', 'rldlru', 'rldldru', 'rldldlru'
   ],
-  exec: () => newThought({ insertNewSubthought: true })
+  exec: () => {
+
+    const { cursor } = store.getState()
+
+    // cancel if parent is readonly or unextendable
+    if (cursor) {
+      if (meta(pathToContext(cursor)).readonly) {
+        error(`"${ellipsize(headValue(cursor))}" is read-only. No subthoughts may be added.`)
+        return
+      }
+      else if (meta(pathToContext(cursor)).unextendable) {
+        error(`"${ellipsize(headValue(cursor))}" is unextendable. No subthoughts may be added.`)
+        return
+      }
+    }
+
+    newThought({ insertNewSubthought: true })
+  }
 }
