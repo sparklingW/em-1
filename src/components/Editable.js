@@ -197,11 +197,11 @@ export const Editable = connect()(({ isEditing, thoughtsRanked, contextChain, sh
       // e.preventDefault() does not work
       // disabled={readonly} removes contenteditable property to thought cannot be selected/navigated
       if (readonly) {
-        error(`"${ellipsize(newValue)}" is readonly and cannot be edited.`)
+        error(`"${ellipsize(oldValue)}" is readonly and cannot be edited.`)
         return
       }
       else if (uneditable) {
-        error(`"${ellipsize(newValue)}" is uneditable.`)
+        error(`"${ellipsize(oldValue)}" is uneditable.`)
         return
       }
       else if(options && !options.includes(newValue.toLowerCase())) {
