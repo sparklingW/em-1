@@ -164,3 +164,25 @@ export const TOOLBAR_DEFAULT_SHORTCUTS = [
   'redo',
   'exportContext',
 ]
+
+export const INITIAL_SETTINGS = `
+  <ul>
+    <li>Settings
+      <ul>
+        <li>=readonly</li>
+        <li>Theme
+          <ul>
+            <li>=readonly</li>
+            <li>=options
+              <ul>
+                <li>Dark</li>
+                <li>Light</li>
+              </ul>
+            </li>
+            <li>Dark</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+`
