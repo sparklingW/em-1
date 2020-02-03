@@ -14,6 +14,7 @@ import {
   dataIntegrityCheck,
   equalPath,
   expandThoughts,
+  getSetting,
   hashContext,
   hashContextUrl,
   headValue,
@@ -86,7 +87,7 @@ export default (state, { thoughtsRanked, contextChain = [], cursorHistoryClear, 
       : []
   )
 
-  const tutorialStep = state.settings.tutorialStep
+  const tutorialStep = +getSetting('Tutorial Step', state)[0]
 
   setTimeout(() => dataIntegrityCheck(thoughtsResolved), 100)
 
@@ -109,7 +110,7 @@ export default (state, { thoughtsRanked, contextChain = [], cursorHistoryClear, 
     contextViews: newContextViews,
     editing: editing != null ? editing : state.editing,
     ...settings(state, {
-      key: 'tutorialStep',
+      key: 'Tutorial Step',
       value: tutorialStep + (
         (tutorialStep === TUTORIAL_STEP_AUTOEXPAND &&
           thoughtsResolved &&

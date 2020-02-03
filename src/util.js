@@ -44,6 +44,7 @@ import { getNextRank } from './util/getNextRank.js'
 import { getPrevRank } from './util/getPrevRank.js'
 import { getRankAfter } from './util/getRankAfter.js'
 import { getRankBefore } from './util/getRankBefore.js'
+import { getSetting } from './util/getSetting.js'
 import { getSubthoughts } from './util/getSubthoughts.js'
 import { getThought } from './util/getThought.js'
 import { getThoughtAfter } from './util/getThoughtAfter.js'
@@ -165,6 +166,7 @@ export {
   getPrevRank,
   getRankAfter,
   getRankBefore,
+  getSetting,
   getSubthoughts,
   getThought,
   getThoughtAfter,

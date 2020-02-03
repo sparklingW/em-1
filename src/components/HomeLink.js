@@ -2,18 +2,23 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { store } from '../store.js'
 
+import {
+  EM_TOKEN,
+} from '../constants.js'
+
 // components
 import { Modal } from './Modal.js'
 
 // util
 import {
   home,
+  meta,
   restoreCursorBeforeSearch,
 } from '../util.js'
 
 /** A link to the home screen */
-export const HomeLink = connect(({ settings, focus, showModal }) => ({
-  dark: settings.dark,
+export const HomeLink = connect(({ focus, showModal }) => ({
+  dark: !meta([EM_TOKEN, 'Settings', 'Theme']).Light,
   focus,
   showModal
 }))(({ dark, focus, showModal, inline, dispatch }) =>

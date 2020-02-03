@@ -13,6 +13,7 @@ import {
   asyncFocus,
   contextOf,
   ellipsize,
+  getSetting,
   getThoughtsRanked,
   headRank,
   headValue,
@@ -33,7 +34,9 @@ const Icon = ({ fill = 'black', size = 20, style }) => <svg version="1.1" classN
 
   // newThought command handler that does some pre-processing before handing off to newThought
 const exec = (e, { type }) => {
-  const { cursor, contextViews, settings: { tutorial, tutorialStep } = {} } = store.getState()
+  const { cursor, contextViews } = store.getState()
+  const tutorial  = getSetting('Tutorial')[0] !== 'Off'
+  const tutorialStep = +getSetting('Tutorial Step')[0]
 
   // cancel if tutorial has just started
   if (tutorial && tutorialStep === TUTORIAL_STEP_START) return

@@ -21,27 +21,41 @@ import { Tutorial } from './Tutorial.js'
 import { Toolbar } from './Toolbar'
 import HamburgerMenu from './HamburgerMenu.js'
 
+// constants
+import {
+  EM_TOKEN,
+} from '../constants.js'
+
 // util
 import {
+  getSetting,
   isTutorial,
+  meta,
   restoreSelection,
 } from '../util.js'
 
-export const AppComponent = connect(({ dataNonce, focus, search, user, settings, dragInProgress, isLoading, showModal }) => ({
-  dataNonce,
-  dark: settings.dark,
-  dragInProgress,
-  focus,
-  isLoading,
-  scaleSize: settings.scaleSize,
-  search,
-  showModal,
-  tutorial: settings.tutorial,
-  tutorialStep: settings.tutorialStep,
-  user
-}))((
-  { dataNonce, focus, search, user, dragInProgress, dark, tutorialStep, isLoading, dispatch, showModal, scaleSize }) => {
+export const AppComponent = connect(({ dataNonce, focus, search, user, settings, dragInProgress, isLoading, showModal }) => {
+  const dark = getSetting('Theme')[0] !== 'Light'
+  const scaleSize = (getSetting('Font Size')[0] || 16) / 16
+  const tutorial = meta([EM_TOKEN, 'Settings', 'Tutorial']).On
+  const tutorialStep = getSetting('Tutorial Step')[0] || 1
+  return {
+    dark,
+    dataNonce,
+    dragInProgress,
+    focus,
+    isLoading,
+    scaleSize,
+    search,
+    showModal,
+    tutorial,
+    tutorialStep,
+    user
+  }
+})((
+  { dark, dataNonce, focus, search, user, dragInProgress, tutorialStep, isLoading, dispatch, showModal, scaleSize }) => {
   return <div ref={() => {
+
     document.body.classList[dark ? 'add' : 'remove']('dark')
 
     // set selection on desktop on load

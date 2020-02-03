@@ -11,6 +11,7 @@ import { Subthoughts } from './Subthoughts.js'
 
 // constants
 import {
+  EM_TOKEN,
   MODAL_CLOSE_DURATION,
   RANKED_ROOT,
   TUTORIAL2_STEP_SUCCESS,
@@ -19,22 +20,31 @@ import {
 // util
 import {
   cursorBack,
+  getSetting,
   getThoughtsRanked,
   isTutorial,
+  meta,
 } from '../util.js'
 
-export const Content = connect(({ dataNonce, focus, search, user, settings, dragInProgress, isLoading, showModal }) => ({ dataNonce,
-  dark: settings.dark,
-  dragInProgress,
-  focus,
-  isLoading,
-  scaleSize: settings.scaleSize,
-  search,
-  showModal,
-  tutorial: settings.tutorial,
-  tutorialStep: settings.tutorialStep,
-  user,
-}))((
+export const Content = connect(({ dataNonce, focus, search, user, settings, dragInProgress, isLoading, showModal }) => {
+  const dark = getSetting('Theme')[0] !== 'Light'
+  const scaleSize = (getSetting('Font Size')[0] || 16) / 16
+  const tutorial = meta([EM_TOKEN, 'Settings', 'Tutorial']).On
+  const tutorialStep = getSetting('Tutorial Step')[0] || 1
+  return {
+    dataNonce,
+    dark,
+    dragInProgress,
+    focus,
+    isLoading,
+    scaleSize,
+    search,
+    showModal,
+    tutorial,
+    tutorialStep,
+    user,
+  }
+})((
     { dataNonce, search, user, dragInProgress, dark, tutorialStep, isLoading, dispatch, showModal, scaleSize }) => {
 
   const rootThoughts = getThoughtsRanked(RANKED_ROOT)
